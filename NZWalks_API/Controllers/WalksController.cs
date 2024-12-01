@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NZWalks_API.CustomActionFilters;
@@ -27,6 +28,7 @@ namespace NZWalks_API.Controllers
         //POST: /api/walks
         [HttpPost] //Since we are getting data from the client we must accept the user through DTO, so we create a dto for walks client
         [ValidateModelAttribute]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDTO addWalkRequestDTO)
         {
            
@@ -44,6 +46,7 @@ namespace NZWalks_API.Controllers
         //Get Walks
         //GET: /api/walks?filterOn=Name&filterQuery=
         [HttpGet]
+        [Authorize(Roles = "Reader,Writer")]
         public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
             [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize =1000
             )
@@ -59,6 +62,7 @@ namespace NZWalks_API.Controllers
         //Get Walk by ID 
         //GET: /api/walks/{id}
         [HttpGet("{id:Guid}")]
+        [Authorize(Roles = "Reader,Writer")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var walkdomainmodel = await walkRepository.GetByIdAsync(id);
@@ -75,6 +79,7 @@ namespace NZWalks_API.Controllers
         //PUT: /api/walks/{id}
         [HttpPut("{id:Guid}")]
         [ValidateModelAttribute]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> UpdateById([FromRoute] Guid id, UpdateWalkRequestDTO updateWalkRequestDTO)
         {
             //Map DTO To Domain Model
@@ -95,6 +100,7 @@ namespace NZWalks_API.Controllers
         //Delete Walk By Id
         //DELETE: /api/walks/{id}
         [HttpDelete("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteById([FromRoute] Guid id)
         {
             var deletedwalkDomainModel = await walkRepository.DeleteAsync(id);

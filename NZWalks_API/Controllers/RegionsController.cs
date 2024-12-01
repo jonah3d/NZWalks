@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ namespace NZWalks_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class RegionsController : ControllerBase
     {
         private readonly NZWalksDbContext dbContext;
@@ -26,6 +28,7 @@ namespace NZWalks_API.Controllers
 
         // GET: api/Regions It is to return all the regions in the database to this endpoint
         [HttpGet]
+        [Authorize(Roles = "Reader,Writer")]
         public async Task<IActionResult> GetAll()
         {
             //Get all the regions from the database - Domain Model
@@ -67,6 +70,7 @@ namespace NZWalks_API.Controllers
         //GetSingleRegion method is to return a single region based on the id passed in the URL
         [HttpGet]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Reader,Writer")]
         public async Task<IActionResult> GetById([FromRoute]Guid id)//since we have the ids as guid we will get them as guid
         {
             //the find method can only be used with the ID property
@@ -104,6 +108,7 @@ namespace NZWalks_API.Controllers
 
         //Post method to add a new region to the database
         [HttpPost]
+        [Authorize(Roles ="Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map or convert the DTO model to the domain model
@@ -146,6 +151,7 @@ namespace NZWalks_API.Controllers
         //Put method to update a region in the database
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto regionRequestDto)
         {
             //check if region exists
@@ -204,6 +210,7 @@ namespace NZWalks_API.Controllers
 
         //Delete method to delete a region from the database
         [HttpDelete]
+        [Authorize(Roles = "Writer")]
         [Route("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
